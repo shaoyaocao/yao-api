@@ -1,0 +1,42 @@
+{
+  "name": "yao-api",
+  "version": "0.0.1",
+  "description": "通用性api,基于koa2-graphql-mongodb",
+  "main": "app.js",
+  "scripts": {
+    "test": "babel-node ./bin/www",
+    "start": "nodemon ./bin/www --exec babel-node --presets es2015,stage-2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shaoyaocao/yao-api.git"
+  },
+  "keywords": [
+    "yao"
+  ],
+  "author": "yao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shaoyaocao/yao-api/issues"
+  },
+  "homepage": "https://github.com/shaoyaocao/yao-api#readme",
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "^4.15.3",
+    "express-graphql": "^0.6.6",
+    "graphql": "^0.10.3",
+    "jade": "~1.11.0",
+    "mongoose": "^4.11.1",
+    "morgan": "~1.8.1",
+    "node-uuid": "^1.4.8",
+    "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "nodemon": "^1.11.0"
+  }
+}
