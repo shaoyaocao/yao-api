@@ -8,7 +8,7 @@ import {
 } from './dbSchema';
 
 mongoose.Promise = global.Promise;
-let db = mongoose.createConnection(DATABASE_URL,{useMongoClient: true,});//你的数据库地址
+let db = mongoose.connect(DATABASE_URL,{useMongoClient: true,});//你的数据库地址
 
 let TODO = mongoose.model('todos', todoSchema,'todos');
 let USERS = mongoose.model('users', usersSchema,'users');
@@ -21,8 +21,12 @@ export function getTodo(_id) {
 export function countTodos(){
   return TODO.count();
 }
-export function getTodos() {
-  return TODO.find({});
+export function getTodos(pageSize,pageIndex) {
+  if(pageIndex!==null&&pageSize!==null){
+    return TODO.find({}, null, {sort: {'_id': -1}, skip : ( pageIndex - 1 ) * pageSize, limit : pageSize });
+  }else{
+    return TODO.find({});
+  }
 }
 //获取一周内的任务完成情况
 export function getLastWeekTodos(uid){
@@ -88,10 +92,9 @@ export function loginUser(email,pwd){
     });
   }
   let userLogin = {
-    "token":uuid.v1(),
-    "lastlogin":new Date().getTime(),
+    "lastlogin":new Date().getTime()
   };
-  return USERS.findOneAndUpdate({ email:email,pwd:pwd}, { $set: userLogin},{new: true});
+  return  USERS.findOneAndUpdate({ email,pwd}, { $set: userLogin},{new: true})
 }
 export function getUsers(){
   return USERS.find({});

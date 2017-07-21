@@ -36,7 +36,7 @@ import {
   setingsType,
   greetingsType
 } from './schemasType/index';
-
+//查询语句结构
 const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
@@ -48,8 +48,12 @@ const queryType = new GraphQLObjectType({
   	  resolve: (_, { _id }) => getTodo(_id),
   	},
   	todos: {
-  	  type: new GraphQLList(todoType),
-  	  resolve: () => getTodos(),
+      type: new GraphQLList(todoType),
+      args: {
+  		    pageSize: { type: GraphQLInt },
+  		    pageIndex: { type: GraphQLInt },
+  	  },
+  	  resolve: (_, { pageSize,pageIndex }) => getTodos(pageSize,pageIndex),
   	},
     getLastWeekTodos:{
       type: new GraphQLList(todoType),

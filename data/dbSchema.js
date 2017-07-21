@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+//查询结构
 let todoSchema=new mongoose.Schema({
     _id:{type:mongoose.Schema.ObjectId},
     completed:{type:Boolean},
