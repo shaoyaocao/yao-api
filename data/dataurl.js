@@ -1,3 +1,3 @@
 module.exports = {
-  DATABASE_URL:"mongodb://name:pwd@localhost:27017/db",
+  DATABASE_URL:"mongodb://lsy:test@150.129.82.187:27017/lsy",
 };
