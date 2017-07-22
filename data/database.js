@@ -8,12 +8,37 @@ import {
 } from './dbSchema';
 
 mongoose.Promise = global.Promise;
+
 let db = mongoose.connect(DATABASE_URL,{useMongoClient: true,});//你的数据库地址
 
 let TODO = mongoose.model('todos', todoSchema,'todos');
 let USERS = mongoose.model('users', usersSchema,'users');
 let SETTING = mongoose.model('setting', settingSchema,'setting');
 //加密参数
+export function login(email,pwd){
+  if (!email) {
+    return new Promise((resolve, reject) => {
+      reject(`邮箱不能为空`);
+    });
+  }
+  if (!pwd) {
+    return new Promise((resolve, reject) => {
+      reject(`密码不能为空`);
+    });
+  }
+  let userLogin = {
+    "lastlogin":new Date().getTime()
+  };
+  return new Promise((resolve,reject)=>{
+    USERS.findOneAndUpdate({ email,pwd}, { $set: userLogin},{new: true},function(err,doc){
+      if(err){
+        reject(err)
+      }else{
+        resolve(doc)
+      }
+    }) 
+  })
+}
 
 export function getTodo(_id) {
   return TODO.findOne({ _id:mongoose.Types.ObjectId(_id)});

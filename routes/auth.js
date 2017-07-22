@@ -1,29 +1,48 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
+import {login} from '../data/database'
+import {option} from '../config'
+// import ejwt from 'express-jwt'
+import crypto from 'crypto'
 
 let router = express.Router()
 
-
-router.post('/', function(req, res) {
-    let token = jwt.sign({ id: 'userid' }, 'shhhhh',{ expiresIn: 60 * 60*2 });//生成jwt并设置2小时过期
-    res.send({token})
-});
+function cryptPwd(password) {
+    let md5 = crypto.createHash('md5');
+    return md5.update(password+option.salt).digest('hex');
+}
 
 router.get('/gettokenid',function(req,res){
     let token  = req.headers.authorization.split(' ')[1];
-    console.log(token)
-    let decoded = jwt.verify(token, 'shhhhh');
+    let decoded = jwt.verify(token, option.secret);
     res.send(decoded.id)
 })
 
-router.post('/test',function(req,res){
-    res.send({msg:"success"})
+router.post("/encryption",function(req,res){
+    res.send({msg:cryptPwd(req.body.pwd)})
 })
-router.use('/protected',
-  function(req, res) {
-    consoel.log(req)
+
+router.use('/',function(req, res) {
+    login(req.body.email,req.body.pwd).then((value)=>{
+        res.send({msg:value})
+    }).catch(function(error) {
+        res.send({msg:error})
+    });
+});
+
+
+router.get('/createToken',function(req,res){
+    let token = jwt.sign({ id: 'userid' }, option.secret,{ expiresIn: 60 * 60*2 });//生成jwt并设置2小时过期
+    res.send({token})
+})
+
+router.get('/test',function(req,res){
+    res.send({msg:"test"})
+})
+router.use('/protected',function(req, res) {
     if (!req.user.admin) return res.sendStatus(401);
     res.sendStatus(200);
-  });
+});
+
 
 module.exports = router;

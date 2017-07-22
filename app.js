@@ -2,36 +2,57 @@ import path from 'path'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
-// import favicon from  'serve-favicon'
-import jwt from 'express-jwt'
 import graphQLHTTP from 'express-graphql'
 import bodyParser from 'body-parser'
 import schema from './data/schema.js'
 import index from './routes/index'
 import auth from './routes/auth'
 import users from './routes/users'
-
+import jwt from 'jsonwebtoken'
+import {option} from './config'
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// jwt({ secret: 'shhhhhhared-secret',
-//   audience: 'http://localhost:3000/protected',
-//   issuer: 'http://localhost:3000/auth/test' })
-
-// app.use('/', index);
 
 app.use('/auth', auth);
+
+function authtoken(req,res,next){
+  if(req.headers.authorization&&req.headers.authorization.split(' ')[1]){
+        let token  = req.headers.authorization.split(' ')[1];
+        jwt.verify(token, option.secret, function(err, decoded) {
+            if(err){
+                let msg = {
+                    code:"10010",
+                    name: '自定义的错误消息',
+                    message:err
+                }
+                res.send(msg)
+            }else{
+                next()
+            }
+        });
+    }else{
+        let msg = {
+            code:"10086",
+            name:"自定义的错误消息",
+            msg:"no auth"
+        }
+        res.send(msg)
+    }
+}
+app.use('/dev', graphQLHTTP({
+  schema,
+  pretty: true,
+  graphiql: true,
+}));
+
+app.use(authtoken)
+
 
 app.use('/graphql', graphQLHTTP({
   schema,
@@ -39,11 +60,11 @@ app.use('/graphql', graphQLHTTP({
   graphiql: false,
 }));
 
-app.use('/dev', graphQLHTTP({
-  schema,
-  pretty: true,
-  graphiql: true,
-}));
+app.use("/test",function(req,res){
+  res.send({msg:"test"})
+})
+
+
 
 // error handler
 app.use(function(err, req, res, next) {
