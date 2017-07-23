@@ -56,7 +56,7 @@ const todosType = new GraphQLObjectType({
   	  type: GraphQLInt,
   	  resolve: ({ pages }) =>pages
   	},
-		todos: {
+		list: {
   	  type: new GraphQLList(todoType),
   	  resolve: ({ todos }) =>todos
   	},
