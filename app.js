@@ -16,8 +16,16 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '')));
 
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By",' 3.2.1')
+    res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
 
 app.use('/auth', auth);
 
@@ -51,8 +59,16 @@ app.use('/dev', graphQLHTTP({
   graphiql: true,
 }));
 
-app.use(authtoken)
+app.get('/file/upload/img/:file', function(req, res){
+    var file = req.params.file;
+    res.sendFile(__dirname+'/upload/img/' + file,function(err){
+        if(typeof err !="undefined"){
+            res.sendFile(__dirname+'/upload/img/default.jpg');
+        }
+    });
+});
 
+app.use(authtoken)
 
 app.use('/graphql', graphQLHTTP({
   schema,

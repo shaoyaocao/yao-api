@@ -32,6 +32,7 @@ import {
 
 import {
   todoType,
+  todosType,
   usersType,
   setingsType,
   greetingsType
@@ -48,7 +49,7 @@ const queryType = new GraphQLObjectType({
   	  resolve: (_, { _id }) => getTodo(_id),
   	},
   	todos: {
-      type: new GraphQLList(todoType),
+      type: todosType,
       args: {
   		    pageSize: { type: GraphQLInt },
   		    pageIndex: { type: GraphQLInt },

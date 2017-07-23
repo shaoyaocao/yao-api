@@ -40,6 +40,29 @@ const todoType = new GraphQLObjectType({
   	},
   })
 });
+
+const todosType = new GraphQLObjectType({
+  name: 'Todos',
+  fields: () => ({
+		index: {
+  	  type: GraphQLInt,
+  	  resolve: ({ index }) =>index
+  	},
+		size: {
+  	  type: GraphQLInt,
+  	  resolve: ({ size }) =>size
+  	},
+		pages: {
+  	  type: GraphQLInt,
+  	  resolve: ({ pages }) =>pages
+  	},
+		todos: {
+  	  type: new GraphQLList(todoType),
+  	  resolve: ({ todos }) =>todos
+  	},
+  })
+});
 module.exports={
-  todoType
+	todoType,
+	todosType
 }

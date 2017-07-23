@@ -48,7 +48,21 @@ export function countTodos(){
 }
 export function getTodos(pageSize,pageIndex) {
   if(pageIndex!==null&&pageSize!==null){
-    return TODO.find({}, null, {sort: {'_id': -1}, skip : ( pageIndex - 1 ) * pageSize, limit : pageSize });
+    return new Promise((resolve,reject) => {
+      TODO.find({}).count(function(err,count){
+        TODO.find({}, null, {sort: {'_id': -1}, skip : ( pageIndex - 1 ) * pageSize, limit : pageSize }).find(function(err,result){
+          let send = {
+            pages:Math.ceil(count/pageSize),
+            index:pageIndex,
+            size:pageSize,
+            todos:result
+          }
+          if(err)reject(err)
+          resolve(send)
+        })
+      })
+    })
+
   }else{
     return TODO.find({});
   }
