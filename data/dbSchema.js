@@ -33,8 +33,24 @@ let settingSchema=new mongoose.Schema({
     versionKey: false
 });
 
+let articleSchema=new mongoose.Schema({
+    _id:{type:mongoose.Schema.ObjectId},
+    uid:{type:String},
+  	article: {type:String},
+  	adddate: {type: Number},
+  	title: {type: String},
+  	content: {type: String},
+  	keyword: {type: String},
+  	remark: {type: String},
+  	author: {type: String},
+  },{
+    versionKey: false
+});
+
+
 module.exports={
   todoSchema,
   usersSchema,
-  settingSchema
+  settingSchema,
+  articleSchema
 }

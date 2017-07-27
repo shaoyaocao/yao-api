@@ -1,0 +1,5 @@
+{
+  "name": "api",
+  "interpreter": "babel-node",
+  "script": "./bin/www"
+}

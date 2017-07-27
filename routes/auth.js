@@ -25,8 +25,9 @@ router.post("/encryption",function(req,res){
 router.use('/',function(req, res) {
     login(req.body.email,req.body.pwd).then((value)=>{
         let authtoken = jwt.sign({ id: 'userid' }, option.secret,{ expiresIn: 60 * 60*2 });//生成jwt并设置2小时过期
+        let timeout = Date.now()+7200000
         if(value !== null){
-            res.send({msg:value,authtoken})
+            res.send({msg:value,authtoken,timeout})
         }else{
             res.send({msg:"用户名或密码错误",code:"10086"})
         }

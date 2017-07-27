@@ -4,7 +4,8 @@ import {DATABASE_URL} from './dataurl';
 import {
   todoSchema,
   usersSchema,
-  settingSchema
+  settingSchema,
+  articleSchema
 } from './dbSchema';
 
 mongoose.Promise = global.Promise;
@@ -14,6 +15,7 @@ let db = mongoose.connect(DATABASE_URL,{useMongoClient: true,});//你的数据�
 let TODO = mongoose.model('todos', todoSchema,'todos');
 let USERS = mongoose.model('users', usersSchema,'users');
 let SETTING = mongoose.model('setting', settingSchema,'setting');
+let ARTICLE = mongoose.model('article', articleSchema,'article');
 //加密参数
 export function login(email,pwd){
   if (!email) {
@@ -46,6 +48,41 @@ export function getTodo(_id) {
 export function countTodos(){
   return TODO.count();
 }
+export function filterTodos(filter,pageSize,pageIndex){
+  let option = { $regex: new RegExp(filter, 'i') } 
+  if(typeof pageIndex!=="undefined"&&typeof pageSize!=="undefined"){
+    return new Promise((resolve,reject) => {
+      TODO.find({todo:option}).count(function(err,count){
+        TODO.find({todo:option}, null, {sort: {'_id': -1}, skip : ( pageIndex - 1 ) * pageSize, limit : pageSize }).find(function(err,result){
+          let send = {
+            pages:Math.ceil(count/pageSize),
+            index:pageIndex,
+            size:pageSize,
+            todos:result
+          }
+          if(err)reject(err)
+          resolve(send)
+        })
+      })
+    })
+  }else{
+    return new Promise((resolve,reject) => {
+      TODO.find({todo:option}).count(function(err,count){
+        TODO.find({todo:option}).find(function(err,result){
+          let send = {
+            pages:1,
+            index:1,
+            size:count,
+            todos:result
+          }
+          if(err)reject(err)
+            resolve(send)
+        })
+      })
+    })
+  }
+}
+
 export function getTodos(pageSize,pageIndex) {
   if(pageIndex!==null&&pageSize!==null){
     return new Promise((resolve,reject) => {
@@ -62,7 +99,6 @@ export function getTodos(pageSize,pageIndex) {
         })
       })
     })
-
   }else{
     return TODO.find({});
   }
@@ -201,4 +237,49 @@ export function createSetting(uid,theme){
   	});
   }
   return SETTING.create({ _id:new mongoose.Types.ObjectId(),uid,theme});
+}
+//获取文章列表
+export function getArticles(pageSize,pageIndex) {
+  if(pageIndex!==null&&pageSize!==null){
+    return new Promise((resolve,reject) => {
+      ARTICLE.find({}).count(function(err,count){
+        ARTICLE.find({}, null, {sort: {'_id': -1}, skip : ( pageIndex - 1 ) * pageSize, limit : pageSize }).find(function(err,result){
+          let send = {
+            pages:Math.ceil(count/pageSize),
+            index:pageIndex,
+            size:pageSize,
+            articles:result
+          }
+          if(err)reject(err)
+          resolve(send)
+        })
+      })
+    })
+  }else{
+    return ARTICLE.find({});
+  }
+}
+export function createArticle(title,article,content,keyword,author,remark){
+  	// article   概述
+  	// content   内容
+  	// adddate   添加日期
+  	// title     标题
+  	// keyword   关键字
+  	// remark    标签
+    // author    作者
+    return new Promise((resolve,reject) => {
+        ARTICLE.create({
+            _id:new mongoose.Types.ObjectId(),
+            title,
+            article,
+            content,
+            keyword,
+            adddate:new Date().getTime(),
+            author,
+            remark
+          }).then((result)=>{
+            resolve(result) ;
+        });
+    })
+
 }

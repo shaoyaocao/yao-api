@@ -16,6 +16,7 @@ import {
   createTodo,
   updateTodo,
   removeTodo,
+  filterTodos,  
   getUser,
   getUsers,
   createUser,
@@ -27,7 +28,9 @@ import {
   getSetting,
   findUser,
   getLastWeekTodos,
-  countTodos
+  countTodos,
+  getArticles,
+  createArticle
 } from './database';
 
 import {
@@ -35,7 +38,9 @@ import {
   todosType,
   usersType,
   setingsType,
-  greetingsType
+  greetingsType,
+  articleType,
+  articlesType
 } from './schemasType/index';
 //查询语句结构
 const queryType = new GraphQLObjectType({
@@ -55,7 +60,16 @@ const queryType = new GraphQLObjectType({
   		    pageIndex: { type: GraphQLInt },
   	  },
   	  resolve: (_, { pageSize,pageIndex }) => getTodos(pageSize,pageIndex),
-  	},
+    },
+    filtertodos:{
+      type:todosType,
+      args:{
+        filter:{type:new GraphQLNonNull(GraphQLString)},
+        pageSize: { type: GraphQLInt },
+        pageIndex: { type: GraphQLInt },
+      },
+      resolve:(_,{filter,pageSize,pageIndex}) => filterTodos(filter,pageSize,pageIndex)
+    },
     getLastWeekTodos:{
       type: new GraphQLList(todoType),
       args: {
@@ -94,6 +108,14 @@ const queryType = new GraphQLObjectType({
   	  },
   	  resolve: (_, { uid }) => getSetting(uid),
     },
+    articles:{
+      type:articlesType,
+      args: {
+  		    pageSize: { type: GraphQLInt },
+  		    pageIndex: { type: GraphQLInt },
+  	  },
+  	  resolve: (_, { pageSize,pageIndex }) => getArticles(pageSize,pageIndex),
+    }
   })
 });
 
@@ -119,6 +141,18 @@ const mutationType = new GraphQLObjectType({
   		    uid: {type: GraphQLString },
   	  },
   	  resolve: (_, { todo,uid }) => createTodo(todo,uid),
+  	},
+  	createArticle: {
+  	  type: articleType,
+  	  args: {
+          article: { type: new GraphQLNonNull(GraphQLString) },
+          content: { type: new GraphQLNonNull(GraphQLString) },
+          title : { type: new GraphQLNonNull(GraphQLString) },
+          keyword : { type: new GraphQLNonNull(GraphQLString) },
+          remark : { type: new GraphQLNonNull(GraphQLString) },
+          author : { type: new GraphQLNonNull(GraphQLString) },
+  	  },
+  	  resolve: (_, { title,article,content,keyword,author,remark }) => createArticle(title,article,content,keyword,author,remark),
   	},
     updateUser:{
       type:usersType,
