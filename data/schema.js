@@ -29,8 +29,11 @@ import {
   findUser,
   getLastWeekTodos,
   countTodos,
+  getArticle,
   getArticles,
-  createArticle
+  createArticle,
+  updateArticle,
+  deleteArticle
 } from './database';
 
 import {
@@ -108,6 +111,13 @@ const queryType = new GraphQLObjectType({
   	  },
   	  resolve: (_, { uid }) => getSetting(uid),
     },
+    article:{
+      type:articleType,
+      args: {
+        _id: { type: GraphQLString },
+  	  },
+      resolve: (_, { _id }) => getArticle(_id),
+    },
     articles:{
       type:articlesType,
       args: {
@@ -153,6 +163,25 @@ const mutationType = new GraphQLObjectType({
           author : { type: new GraphQLNonNull(GraphQLString) },
   	  },
   	  resolve: (_, { title,article,content,keyword,author,remark }) => createArticle(title,article,content,keyword,author,remark),
+    },
+    removeArticle: {
+      type: articleType,
+      args: {
+        _id: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: (_, { _id }) => deleteArticle(_id),
+    },
+  	updateArticle: {
+  	  type: articleType,
+  	  args: {
+          _id: { type: new GraphQLNonNull(GraphQLString) },
+          article: { type: GraphQLString },
+          content: { type: GraphQLString },
+          title : { type: GraphQLString },
+          keyword : { type: GraphQLString },
+          remark : { type: GraphQLString },
+  	  },
+      resolve: (_, { _id, title, article, content, keyword, remark }) => updateArticle(_id,title,article,content,keyword,remark),
   	},
     updateUser:{
       type:usersType,

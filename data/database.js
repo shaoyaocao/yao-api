@@ -239,6 +239,9 @@ export function createSetting(uid,theme){
   return SETTING.create({ _id:new mongoose.Types.ObjectId(),uid,theme});
 }
 //获取文章列表
+export function getArticle(_id) {
+  return ARTICLE.findOne({ _id: mongoose.Types.ObjectId(_id) });
+}
 export function getArticles(pageSize,pageIndex) {
   if(pageIndex!==null&&pageSize!==null){
     return new Promise((resolve,reject) => {
@@ -281,5 +284,22 @@ export function createArticle(title,article,content,keyword,author,remark){
             resolve(result) ;
         });
     })
+}
+export function deleteArticle(_id){
+  return ARTICLE.findOneAndRemove({ _id: mongoose.Types.ObjectId(_id) });
+}
 
+export function updateArticle(_id, title, article, content, keyword, remark){
+  let articleItem = {
+    title, article, content, keyword, remark
+  };
+  if (!_id) return new Promise((resolve, reject) => {
+    reject(`需要用户id值作为查询要更新的用户的条件\n`);
+  });
+  if (!title) delete userItem.email;
+  if (!article) delete userItem.pwd;
+  if (!content) delete userItem.uid;
+  if (!keyword) delete userItem.name;
+  if (!remark) delete userItem.phone;
+  return ARTICLE.findOneAndUpdate({ _id: mongoose.Types.ObjectId(_id) }, articleItem, { new: true });
 }
