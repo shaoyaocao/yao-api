@@ -249,6 +249,7 @@ export function getArticles(pageSize,pageIndex) {
         ARTICLE.find({}, null, {sort: {'_id': -1}, skip : ( pageIndex - 1 ) * pageSize, limit : pageSize }).find(function(err,result){
           let send = {
             pages:Math.ceil(count/pageSize),
+            total:count,
             index:pageIndex,
             size:pageSize,
             articles:result

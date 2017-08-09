@@ -2,9 +2,11 @@ import path from 'path'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
+import cors from  'cors'
 import graphQLHTTP from 'express-graphql'
 import bodyParser from 'body-parser'
 import schema from './data/schema.js'
+import open from './data/openSchema.js'
 import index from './routes/index'
 import auth from './routes/auth'
 import users from './routes/users'
@@ -31,6 +33,7 @@ app.use('/auth', auth);
 
 function authtoken(req,res,next){
   if(req.headers.authorization&&req.headers.authorization.split(' ')[1]){
+        //token验证错误处理
         let token  = req.headers.authorization.split(' ')[1];
         jwt.verify(token, option.secret, function(err, decoded) {
             if(err){
@@ -45,6 +48,7 @@ function authtoken(req,res,next){
             }
         });
     }else{
+        //非token方面错误处理
         let msg = {
             code:"10086",
             name:"自定义的错误消息",
@@ -67,9 +71,15 @@ app.get('/file/upload/img/:file', function(req, res){
         }
     });
 });
+//前台公共数据接口
+app.use('/open',cors(), graphQLHTTP({
+    schema:open,
+    pretty: true,
+    graphiql: false,
+}));
 
+//后台数据处理,开启toke验证
 app.use(authtoken)
-
 app.use('/graphql', graphQLHTTP({
   schema,
   pretty: true,

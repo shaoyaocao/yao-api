@@ -64,6 +64,10 @@ const articlesType = new GraphQLObjectType({
   	  type: GraphQLInt,
   	  resolve: ({ pages }) =>pages
   	},
+    total: {
+  	  type: GraphQLInt,
+			resolve: ({ total }) => total
+  	},
     list: {
   	  type: new GraphQLList(articleType),
   	  resolve: ({ articles }) =>articles
