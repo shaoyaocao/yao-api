@@ -75,7 +75,7 @@ app.get('/file/upload/img/:file', function(req, res){
 app.use('/open',cors(), graphQLHTTP({
     schema:open,
     pretty: true,
-    graphiql: false,
+    graphiql: true,
 }));
 
 //后台数据处理,开启toke验证
