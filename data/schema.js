@@ -16,7 +16,7 @@ import {
   createTodo,
   updateTodo,
   removeTodo,
-  filterTodos,  
+  filterTodos,
   getUser,
   getUsers,
   createUser,

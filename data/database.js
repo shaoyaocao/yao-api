@@ -38,7 +38,7 @@ export function login(email,pwd){
       }else{
         resolve(doc)
       }
-    }) 
+    })
   })
 }
 
@@ -49,7 +49,7 @@ export function countTodos(){
   return TODO.count();
 }
 export function filterTodos(filter,pageSize,pageIndex){
-  let option = { $regex: new RegExp(filter, 'i') } 
+  let option = { $regex: new RegExp(filter, 'i') }
   if(typeof pageIndex!=="undefined"&&typeof pageSize!=="undefined"){
     return new Promise((resolve,reject) => {
       TODO.find({todo:option}).count(function(err,count){
@@ -238,10 +238,11 @@ export function createSetting(uid,theme){
   }
   return SETTING.create({ _id:new mongoose.Types.ObjectId(),uid,theme});
 }
-//获取文章列表
+//根据id获取文章
 export function getArticle(_id) {
   return ARTICLE.findOne({ _id: mongoose.Types.ObjectId(_id) });
 }
+//获取文章列表
 export function getArticles(pageSize,pageIndex) {
   if(pageIndex!==null&&pageSize!==null){
     return new Promise((resolve,reject) => {
@@ -263,6 +264,7 @@ export function getArticles(pageSize,pageIndex) {
     return ARTICLE.find({});
   }
 }
+//创建文章
 export function createArticle(title,article,content,keyword,author,remark){
   	// article   概述
   	// content   内容
@@ -289,7 +291,7 @@ export function createArticle(title,article,content,keyword,author,remark){
 export function deleteArticle(_id){
   return ARTICLE.findOneAndRemove({ _id: mongoose.Types.ObjectId(_id) });
 }
-
+//更新文章
 export function updateArticle(_id, title, article, content, keyword, remark){
   let articleItem = {
     title, article, content, keyword, remark
